@@ -30,7 +30,7 @@ uint8_t robo::openmv::Frame::to_string(char * dst)
     if (dst == NULL) return 0;
     char *ptr = dst;
     #define WRITE(_name_) \
-    ptr += sprintf_P(ptr, PSTR(#_name_ "pos: ")); \
+    ptr += sprintf_P(ptr, PSTR(#_name_ " pos: ")); \
     if (_name_ ## _pos != NULL) ptr += _name_ ## _pos->to_string(ptr); \
     *(ptr++) = '\n';
 

@@ -1,13 +1,13 @@
 #include <Arduino.h>
 #include "echo.h"
 
-void robo::EchoSensor::setup()
+void robo::USSensor::setup()
 {
     pinMode(input_pin, INPUT);
     pinMode(order_pin, OUTPUT);
 }
 
-int robo::EchoSensor::read()
+int robo::USSensor::read()
 {
     digitalWrite(order_pin, HIGH);
     delayMicroseconds(10);

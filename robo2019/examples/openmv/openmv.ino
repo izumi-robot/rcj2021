@@ -19,6 +19,7 @@ void loop() {
         char buff[128] = "";
         frame->to_string(buff);
         Serial.println(buff);
+        delete frame;
     }
     delay(100);
 }

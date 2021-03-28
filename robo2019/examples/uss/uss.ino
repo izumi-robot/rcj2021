@@ -1,7 +1,7 @@
 #include <robo2019.h>
 
-// EchoSensor(Echo-pin, Trig-pin)
-robo::EchoSensor echo(2, 3);
+// USSensor(Echo-pin, Trig-pin)
+robo::USSensor echo(3, 4);
 
 void setup()
 {

@@ -1,5 +1,5 @@
 /**
- * @file echo.h
+ * @file uss.h
  * @brief 超音波センサーHC-SR04操作用のクラス定義
  */
 
@@ -19,11 +19,11 @@
 namespace robo {
 
 /**
- * @class EchoSensor
+ * @class USSensor
  * @brief 超音波センサーHC-SR04操作用のクラス
  * @note robo::Sensorはutil.h内
  */
-class EchoSensor : public robo::Sensor
+class USSensor : public robo::Sensor
 {
 public: // variables
     //! Echo pinの番号
@@ -37,7 +37,7 @@ public: // functions
      * @param[in] i Echo pinの番号
      * @param[in] o Trig pinの番号
      */
-    EchoSensor(int i, int o) : input_pin(i), order_pin(o) {}
+    USSensor(int i, int o) : input_pin(i), order_pin(o) {}
 
     void setup() override;
     int read() override;
