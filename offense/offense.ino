@@ -2,10 +2,16 @@
 #include <SoftwareSerial.h>
 #include <robo2019.h>
 
-namespace info {
-    using namespace robo::move_info;
-}
-
+/**
+ * @brief 自作のオートポインタ型
+ * @tparam T 保持するポインタが指すデータの型
+ * @details
+ *  与えられたポインタの所有権を保持する。具体的には次の通り。
+ *  - 次の場合に自動的にdeleteされる。
+ *      - auto_ptr型のオブジェクトが破棄されるとき
+ *      - reset(new_ptr)で新しいポインタが設定されるとき
+ *  所有権を解放するにはrelease()を使う
+ */
 template <typename T>
 class auto_ptr {
 private:
@@ -45,45 +51,48 @@ public:
     }
 };
 
+// robo::move_infoのエイリアス
+namespace info {
+    using namespace robo::move_info;
+}
+
+// robo::openmvのエイリアス
 namespace omv {
     using namespace robo::openmv;
 }
 
-float update_frame() {
-    static uint8_t frame_count;
-    static uint16_t last_time;
-    static float fps;
-
-    if (++frame_count == 100) {
-        uint16_t cur_time = millis();
-        fps = 100000.0 / (cur_time - last_time);
-        last_time = cur_time;
-        frame_count = 0;
-    }
-    return fps;
-}
-
+// half-pi
 constexpr float HPI = PI / 2;
 constexpr float QPI = PI / 4;
+// 「正面」の範囲
 constexpr float front_range = PI / 10;
+// 機体の移動スピード
 constexpr int8_t max_speed = 100;
-
+// キッカーのピン番号(不使用)
 constexpr uint8_t kicker_pin = 10;
 
 SoftwareSerial motor_ser(12, 13);
 robo::Motor motor(&motor_ser);
 auto_ptr<info::MoveInfo> m_info;
 
+// ラインセンサー群
 namespace lines {
     robo::LineSensor left(1), right(2), back(3);
 
+    /**
+     * @brief センサーで読み取った値が白かどうかを判定する
+     * @param val センサーの値
+     * @return true 白
+     * @return false 黒
+     */
     constexpr bool iswhite(uint16_t val) {
         return val >= 450;
     }
 }
 
-namespace echos {
-    robo::EchoSensor left(1, 2), right(3, 4), back(5, 6);
+// 超音波センサー群
+namespace uss {
+    robo::USSensor left(1, 2), right(3, 4), back(5, 6);
 }
 
 omv::Reader mv_reader(0x12);
@@ -95,9 +104,9 @@ robo::LCD lcd(0x27, 16, 2);
 uint8_t frame_count = 0;
 
 void setup() {
-    echos::left.setup();
-    echos::right.setup();
-    echos::back.setup();
+    uss::left.setup();
+    uss::right.setup();
+    uss::back.setup();
 
     lines::left.setup();
     lines::right.setup();
@@ -116,45 +125,59 @@ void setup() {
 }
 
 void loop() {
+    // ラインセンサーの値を取得
     #define L_BIND(_name_) w_ ## _name_ = lines::iswhite(lines::_name_.read())
     const bool L_BIND(left), L_BIND(right), L_BIND(back);
     #undef L_BIND
     const bool on_line = w_left || w_right || w_back;
 
+    // OpenMV
     FramePtr nframe(mv_reader.read_frame());
     if (nframe) frame.reset(nframe.release());
+    // エイリアス
     using PosPtr = omv::Position *;
+    // ボールの座標(OpenMVが見つけていなかったらNULL)
     PosPtr ball_pos = frame ? frame->ball_pos : NULL;
+    //　黄色のゴールの座標
     PosPtr y_goal_pos = frame ? frame->y_goal_pos : NULL;
+    // 黄色のゴールの方向(10はとにかく大きい値というだけで深い意味なし)
     float y_goal_dir = y_goal_pos ? omv::pos2dir(*y_goal_pos) : 10;
+
+    // BNO055で現在の方向を取得(方向の定義はrobo2019/README参照)
     float bno_dir = bno055.get_geomag_direction();
 
+    // ラインセンサー処理(アウトオブバウンズ対策)
     if (on_line) { // 線を踏んだ
         float d = 0.0;
         if (abs(y_goal_dir) < front_range) {
+            // ゴールが前にある => 前にペナルティエリアがある
             d = PI;
         } else {
-            //#define USE_ECHO
-            #ifdef USE_ECHO
-            #define BIND(_name_) e_ ## _name_ = echos::_name_.read()
+            // ペナルティエリア以外
+            //#define USE_USS
+            #ifdef USE_USS
+            #define BIND(_name_) e_ ## _name_ = uss::_name_.read()
             uint16_t BIND(left), BIND(right), BIND(back);
             #undef BIND
             d = (e_back < e_right && e_back < e_left)
                 ? 0.0 // 後ろの壁が一番近い => 前に進む
                 : e_left < e_right ? -HPI : HPI; // 左の方が近い ? 右に進む : 左に進む
-            #else /* USE_ECHO */
-            d = w_left == w_right ? (w_back ? 0.0 : PI) : w_left ? -HPI : HPI;
-            #endif /* USE_ECHO */
+            #else /* USE_USS */
+            d = w_left == w_right
+            ? (w_back ? 0.0 : PI) // 左と右どちらも同じ色 => 後ろのラインセンサーに応じて決定
+            : (w_left ? -HPI : HPI); // 左右で色が違う => 左が白 ? 右に進む : 左に進む
+            #endif /* USE_USS */
         }
         m_info.reset(new info::Translate(
-            cos(d) * max_speed, sin(d) * max_speed
+            robo::V2_float::from_polar_coord(d, max_speed)
         ));
         goto MOTOR;
     }
 
-    // direction
+    // 姿勢制御
     BNO: {
         float adir = abs(bno_dir);
+        // 左右どちらかわからないが、正面を向いていない
         if (adir > front_range) {
             m_info.reset(new info::Rotate(bno_dir > 0, int8_t(adir * 25 + 20)));
             // (adir - 0) / (PI - 0) * (100 - 20) + 20
@@ -163,21 +186,26 @@ void loop() {
         }
     }
 
+    // ボールを追う
     BALL:
     if (ball_pos != NULL) {
         float ball_dir = omv::pos2dir(*ball_pos);
         m_info.reset(new info::Translate(
+            // ボールの角度から3/2倍した方向に動いて回り込みを実現
             robo::V2_float::from_polar_coord(ball_dir * 3 /2 , max_speed)
         ));
         goto MOTOR;
     }
 
+    // 何もすることがないため停止
     m_info.reset(new info::Stop());
 
+    // モーターのパワーを更新
     MOTOR: {
         if (m_info) m_info->apply(motor);
     }
 
+    // ログをとる
     LOG:
     if (++frame_count == 10) {
         //lcd.clear();
