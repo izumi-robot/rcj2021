@@ -104,6 +104,11 @@ void robo::Motor::set_velocity(const float &vx, const float &vy, bool maximize)
     set_all_motors(e2, e1, e1, e2, maximize);
 }
 
+void robo::Motor::set_velocity(const robo::V2_float &vel, bool maximize)
+{
+    set_velocity(vel.x, vel.y, maximize);
+}
+
 void robo::Motor::set_left_right(int8_t left, int8_t right, bool maximize)
 {
     set_all_motors(left, right, left, right, maximize);

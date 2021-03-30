@@ -99,28 +99,28 @@ public:
      * @param[in] pin モーターのピン番号
      * @return int8_t モーターのパワー
      */
-    inline int8_t get_power(uint8_t pin) const;
+    int8_t get_power(uint8_t pin) const;
 
     /**
      * @brief モーターのパワーの文字列表示を取得する
      * @param[out] dst 結果の文字列を保存するポインター
      * @param[in] pin モーターのピン番号
      */
-    inline uint8_t get_power_str(char *dst, uint8_t pin);
+    uint8_t get_power_str(char *dst, uint8_t pin);
 
     /**
      * @brief モーターのパワーの文字列表示を取得する
      * @param[out] dst 結果の文字列の保存先
      * @param[in] pin モーターのピン番号
      */
-    inline void get_power_str(String *dst, uint8_t pin);
+    void get_power_str(String *dst, uint8_t pin);
 
     /**
      * @brief モーターのパワーの文字列表示を取得する
      * @param[in] pin モーターのピン番号
      * @return String 結果の文字列
      */
-    inline String get_power_str(uint8_t pin) const;
+    String get_power_str(uint8_t pin) const;
 
     /**
      * @brief モーター1つのパワーを設定する
@@ -154,7 +154,7 @@ public:
      * @param[in] maximize パワーを最大化するかどうか(デフォルトはfalse)
      * @details 座標系の定義はREADMEを参照
      */
-    inline void set_velocity(const robo::V2_float &vel, bool maximize = false);
+    void set_velocity(const robo::V2_float &vel, bool maximize = false);
 
     /**
      * @brief 左輪と右輪でわけてパワーを設定する
@@ -163,7 +163,7 @@ public:
      * @param[in] maximize パワーを最大化するかどうか(デフォルトはfalse)
      * @details 左輪、右輪の定義はREADMEを参照
      */
-    inline void set_left_right(int8_t left, int8_t right, bool maximize = false);
+    void set_left_right(int8_t left, int8_t right, bool maximize = false);
 
     /**
      * @brief 方向と速さで機体の平行移動のベクトルを設定する
@@ -172,7 +172,7 @@ public:
      * @param[in] maximize パワーを最大化するかどうか(デフォルトはfalse)
      * @details 方向についてはREADMEを参照。maxmize=trueの場合、speedは無視される。
      */
-    inline void set_dir_and_speed(const float &dir, int8_t speed, bool maximize = false);
+    void set_dir_and_speed(const float &dir, int8_t speed, bool maximize = false);
 
     /**
      * @brief 機体が回転するようにパワーを設定する
@@ -197,11 +197,6 @@ public:
 };
 
 } // namespace robo
-
-inline void robo::Motor::set_velocity(const robo::V2_float &vel, bool maximize)
-{
-    set_velocity(vel.x, vel.y, maximize);
-}
 
 #else /* ARDUINO */
 

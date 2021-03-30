@@ -61,10 +61,10 @@ public:
         }
 
         //!
-        inline const int &left()  const { return _list[0]; }
-        inline const int &right() const { return _list[1]; }
-        inline const int &back()  const { return _list[2]; }
-        inline const int &operator[](size_t i) const { return _list[i]; }
+        const int &left()  const { return _list[0]; }
+        const int &right() const { return _list[1]; }
+        const int &back()  const { return _list[2]; }
+        const int &operator[](size_t i) const { return _list[i]; }
     };
 
 private:
@@ -83,19 +83,19 @@ public:
     Sensor(const Sensor &left, const Sensor &right, const Sensor &back)
         : _list{ left, right, back }, _values(this) {}
 
-    inline const Sensor &left()  const { return _list[0]; }
-    inline const Sensor &right() const { return _list[1]; }
-    inline const Sensor &back()  const { return _list[2]; }
+    const Sensor &left()  const { return _list[0]; }
+    const Sensor &right() const { return _list[1]; }
+    const Sensor &back()  const { return _list[2]; }
 
-    inline Sensor &left()  { return _list[0]; }
-    inline Sensor &right() { return _list[1]; }
-    inline Sensor &back()  { return _list[2]; }
+    Sensor &left()  { return _list[0]; }
+    Sensor &right() { return _list[1]; }
+    Sensor &back()  { return _list[2]; }
 
-    inline const Sensor &operator[](size_t i) const { return _list[i]; }
-    inline Sensor &operator[](size_t i) { return _list[i]; }
+    const Sensor &operator[](size_t i) const { return _list[i]; }
+    Sensor &operator[](size_t i) { return _list[i]; }
 
-    inline const Values &values() const { return _values; }
-    inline Values &values() { return _values; }
+    const Values &values() const { return _values; }
+    Values &values() { return _values; }
 
     void setup()
     {
@@ -106,7 +106,7 @@ public:
         update();
     }
 
-    inline void update()
+    void update()
     {
         _values.update();
     }

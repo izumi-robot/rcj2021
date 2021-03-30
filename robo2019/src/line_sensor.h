@@ -47,26 +47,9 @@ public:
      */
     LineSensor(uint8_t i) : in_pin(i) {}
 
-    inline void setup() override;
-    inline int read() override;
+    void setup() override;
+    int read() override;
 };
-
-int LineSensor::white_border = 600;
-
-bool LineSensor::iswhite(int c)
-{
-    return c >= white_border;
-}
-
-void LineSensor::setup()
-{
-    pinMode(in_pin, INPUT);
-}
-
-int LineSensor::read()
-{
-    return analogRead(in_pin);
-}
 
 } // namespace robo
 

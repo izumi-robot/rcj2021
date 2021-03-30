@@ -22,7 +22,7 @@ robo::Vector2D<T> &robo::Vector2D<T>::operator=(const T (&tmp)[2])
 
 #define SUBSCRIBE_IMPL(_type_, _spec_) \
     template <typename T>              \
-    inline _type_ robo::Vector2D<T>::operator[](size_t index) _spec_ { return index ? x : y; }
+    _type_ robo::Vector2D<T>::operator[](size_t index) _spec_ { return index ? x : y; }
 
 SUBSCRIBE_IMPL(const T &, const)
 SUBSCRIBE_IMPL(T &, )
@@ -107,7 +107,7 @@ void robo::Vector2D<T>::mag(float *dst)
 // operator(Vec2D, Vec2D)
 #define OP_IMPL(_op_)                                                                                \
     template <typename T>                                                                            \
-    inline robo::Vector2D<T> operator _op_(const robo::Vector2D<T> &lh, const robo::Vector2D<T> &rh) \
+    robo::Vector2D<T> operator _op_(const robo::Vector2D<T> &lh, const robo::Vector2D<T> &rh) \
     {                                                                                                \
         return robo::Vector2D<T>(lh.x _op_ rh.x, lh.y _op_ rh.y);                                    \
     }
@@ -132,7 +132,7 @@ IM4(IOP_IMPL)
 // operator(Vec2D, T (&)[2])
 #define OP_IMPL(_op_)                                                                    \
     template <typename T>                                                                \
-    inline robo::Vector2D<T> operator _op_(const robo::Vector2D<T> &lh, const T(&rh)[2]) \
+    robo::Vector2D<T> operator _op_(const robo::Vector2D<T> &lh, const T(&rh)[2]) \
     {                                                                                    \
         return robo::Vector2D<T>(lh.x _op_ rh[0], lh.y _op_ rh[1]);                      \
     }
@@ -157,7 +157,7 @@ IM4(IOP_IMPL)
 // operator(T (&)[2], Vec2D)
 #define OP_IMPL(_op_)                                                                    \
     template <typename T>                                                                \
-    inline robo::Vector2D<T> operator _op_(const T(&lh)[2], const robo::Vector2D<T> &rh) \
+    robo::Vector2D<T> operator _op_(const T(&lh)[2], const robo::Vector2D<T> &rh) \
     {                                                                                    \
         return robo::Vector2D<T>(lh[0] _op_ rh.x, lh[1] _op_ rh.y);                      \
     }
@@ -169,7 +169,7 @@ IM4(OP_IMPL)
 // operator(Vec2D, T)
 #define OP_IMPL(_op_)                                                                \
     template <typename T>                                                            \
-    inline robo::Vector2D<T> operator _op_(const robo::Vector2D<T> &lh, const T &rh) \
+    robo::Vector2D<T> operator _op_(const robo::Vector2D<T> &lh, const T &rh) \
     {                                                                                \
         return robo::Vector2D<T>(lh.x _op_ rh, lh.y _op_ rh);                        \
     }
@@ -194,7 +194,7 @@ IM2(IOP_IMPL)
 // operator(T, Vec2D)
 #define OP_IMPL(_op_)                                                                \
     template <typename T>                                                            \
-    inline robo::Vector2D<T> operator _op_(const T &lh, const robo::Vector2D<T> &rh) \
+    robo::Vector2D<T> operator _op_(const T &lh, const robo::Vector2D<T> &rh) \
     {                                                                                \
         return robo::Vector2D<T>(lh _op_ rh.x, lh _op_ rh.y);                        \
     }
@@ -207,9 +207,9 @@ IM2(OP_IMPL)
 #undef IM2
 
 template <typename T>
-inline bool operator==(const robo::Vector2D<T> &lh, const robo::Vector2D<T> &rh)
+bool operator==(const robo::Vector2D<T> &lh, const robo::Vector2D<T> &rh)
 {
     return lh.x == rh.x && lh.y == rh.y;
 }
 template <typename T>
-inline bool operator!=(const robo::Vector2D<T> &lh, const robo::Vector2D<T> &rh) { return lh.x != rh.x || lh.y != rh.y; }
+bool operator!=(const robo::Vector2D<T> &lh, const robo::Vector2D<T> &rh) { return lh.x != rh.x || lh.y != rh.y; }

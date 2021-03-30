@@ -87,8 +87,8 @@ public: // instance properties
     Vector2D& operator=(const Vector2D &rh);
     Vector2D& operator=(const T (&rh)[2]);
 
-    inline const T& operator[](size_t index) const;
-    inline T& operator[](size_t index);
+    const T& operator[](size_t index) const;
+    T& operator[](size_t index);
 
     /**
      * @brief ベクトルの文字列表現を返す
@@ -113,20 +113,20 @@ public: // instance properties
      * @param[in] v 内積をとるベクトル
      * @return x * v.x + y * v.y
      */
-    inline T dot(const Vector2D &v) const;
+    T dot(const Vector2D &v) const;
     /**
      * @brief 配列tmpをベクトルとみなし、それとの内積を返す
      * @param[in] tmp 内積をとるベクトルの配列形式
      * @return x * tmp[0] + y * tmp[1]
      */
-    inline T dot(const T (&tmp)[2]) const;
+    T dot(const T (&tmp)[2]) const;
     /**
      * @brief ベクトル(x, y)との内積を返す
      * @param[in] x 内積をとるベクトルのx成分
      * @param[in] y 内積をとるベクトルのy成分
      * @return this->x * x + this->y * y
      */
-    inline T dot(const T &x, const T &y) const;
+    T dot(const T &x, const T &y) const;
 
     /**
      * @brief ベクトルvとの内積を返す
@@ -152,7 +152,7 @@ public: // instance properties
      * @brief ベクトルの偏角を返す
      * @return 偏角(ラジアン)
      */
-    inline float angle() const;
+    float angle() const;
     /**
      * @brief ベクトルの偏角を返す
      * @param[out] dst 偏角(ラジアン)
@@ -162,7 +162,7 @@ public: // instance properties
      * @brief ベクトルの大きさを返す
      * @return ベクトルの大きさ
      */
-    inline float mag() const;
+    float mag() const;
     /**
      * @brief ベクトルの大きさを返す
      * @param[out] dst ベクトルの大きさ

@@ -66,7 +66,7 @@ public:
      * @brief bnoが検知されたかどうか
      * @return 検知されたらtrue
      */
-    inline bool detected();
+    bool detected();
 };
 
 } // namespace robo
