@@ -9,4 +9,4 @@ team twelve @ RobocupJunior Japan 2021 Soccer Open<br>
 
 ![offense-constitution.svg](./img/offense-constitution.svg)
 
-(TODO: 機体の情報)
+ディフェンス機体にはキッカーがありませんが、それ以外は似たような構成となっています。
